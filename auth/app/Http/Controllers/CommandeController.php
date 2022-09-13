@@ -109,8 +109,9 @@ class CommandeController extends Controller
     public function SupprimerCommandeEtGererQuantiteProduit($commande, Request $request)
     {
         // Cette fonction permet de verifier si la commande choisit appartient à l'utilisateur authentifié
-        // puis, verifie si la quantité du produit de cette commande est inférieur a la quantite désiré dans la commande
+        // puis, verifier si la quantité du produit de cette commande est inférieur a la quantite désiré dans la commande
         // ensuite, modifier la table des produits en insérant la nouvelle quantité
+        // par la suite, insérer la commande dans la table historique
         // enfin, supprimer la commande
         // PS : il manque la logique du paiement avant la suppression
         $user_id = Auth::user()->id;
