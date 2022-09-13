@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # db:
+  #   image: mysql:8.0
+  #   cap_add:
+  #     - SYS_NICE
+  #   restart: always
+  #   environment:
+  #     - MYSQL_DATABASE=projetda
+  #     - MYSQL_ROOT_PASSWORD=mauFJcuf5dhRMQrjj
+  #   ports:
+  #     - '3306:3306'
+  #   volumes:
+  #     - db:/var/lib/mysql
+  #     - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  auth:
+    image: docker.io/bitnami/laravel:9
+    ports:
+      - '8000:8000'
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_DATABASE=projetda
+      - DB_PASSWORD=
+      - API_GATEWAY_BASE_URI=127.0.0.1:8000/api
+      - PRODUIT_SERVICE_BASE_URI=produit:8000/api
+      - COMMANDE_SERVICE_BASE_URI=commande:8000/api
+      - HISTORIQUE_SERVICE_BASE_URI=historique:8000/api
+    volumes:
+      - './auth:/app'
+    # depends_on:
+    #   - db
+    #command: php artisan migrate
+  produit:
+    image: docker.io/bitnami/laravel:9
+    # ports:
+    #   - '8001:8000'
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_DATABASE=projetda
+      - DB_PASSWORD=
+      - API_GATEWAY_BASE_URI=auth:8000/api
+    volumes:
+      - './produit:/app'
+    depends_on:
+      - auth
+    #command: php artisan migrate
+  commande:
+    image: docker.io/bitnami/laravel:9
+    # ports:
+    #   - '8002:8000'
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_DATABASE=projetda
+      - DB_PASSWORD=
+      - API_GATEWAY_BASE_URI=auth:8000/api
+    volumes:
+      - './commande:/app'
+    depends_on:
+      - produit
+    #command: php artisan migrate
+  historique:
+    image: docker.io/bitnami/laravel:9
+    # ports:
+    #   - '8003:8000'
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_DATABASE=projetda
+      - DB_PASSWORD=
+      - API_GATEWAY_BASE_URI=auth:8000/api
+    volumes:
+      - './historique:/app'
+    depends_on:
+      - commande
